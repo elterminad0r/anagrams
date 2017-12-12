@@ -11,6 +11,20 @@ import sys
 
 from random import randrange, choice, shuffle, sample
 
+AN_TRUE = [("OLYMPIAD", "OLYMPIAD"),
+           ("LEMON", "MELON"),
+           ("COVERSLIP", "SLIPCOVER"),
+           ("TEARDROP", "PREDATOR"),
+           ("ABBCCCDDD", "DDDCCCBBA"),
+           ]
+
+AN_FALSE = [("I", "A"),
+            ("FORTY", "FORT"),
+            ("ONE", "SIX"),
+            ("GREEN", "RANGE"),
+            ("ABBCCCDDD", "AAABBBCCD"),
+            ]
+
 def strip_suffix(script):
     return re.match(r"(.*)\.pas", script).group(1)
 
@@ -21,6 +35,7 @@ def get_args():
     return parser.parse_args()
 
 def get_anagrams(length, num):
+    yield from AN_TRUE
     for _ in range(num):
         word = [choice(string.ascii_uppercase) for _ in range(length())]
         copy = word[:]
@@ -28,6 +43,7 @@ def get_anagrams(length, num):
         yield map("".join, [word, copy])
 
 def get_nonanagrams(length, num):
+    yield from AN_FALSE
     for _ in range(num):
         word = [randrange(len(string.ascii_uppercase)) for _ in range(length())]
         copy = word[:]
