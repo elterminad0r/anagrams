@@ -244,15 +244,16 @@ end.
     a complexity of $O(n^2)$, owed to its linear number of passes it must make.
     A better idea really would be to implement something like quicksort, which
     would take $O(n \log(n))$. However, this would in fact also be slower than
-    another sorting-based approach, so I've opted not to do that. As text
-    consists of discrete elements, we can apply an even faster class of sorting
-    algorithm - the integer sort. These don't rely on comparisons, but instead
-    use integer arithmetic, which is generally a lot faster. In this case, the
-    most appropriate would be the counting sort, which has a linear runtime in
-    the length of the list. Counting sort would be appropriate as it is
-    histogram-based, and we have a good restriction on possible characters (ie
-    letters). However, I actually won't implement counting sort either because
-    having constructed a histogram, we can just \textit{compare histograms}.
+    another sorting-based approach, and I'm somewhat constrained for time, so
+    I've opted not to do that. As text consists of discrete elements, we can
+    apply an even faster class of sorting algorithm - the integer sort. These
+    don't rely on comparisons, but instead use integer arithmetic, which is
+    generally a lot faster. In this case, the most appropriate would be the
+    counting sort, which has a linear runtime in the length of the list.
+    Counting sort would be appropriate as it is histogram-based, and we have a
+    good restriction on possible characters (ie letters). However, I actually
+    won't implement counting sort either because having constructed a
+    histogram, we can just \textit{compare histograms}.
 
     \section{Comparing letter frequencies}
 
@@ -324,13 +325,13 @@ end.
     series of frequencies $U$, from indices $1$ to $k$.  This histogram can be
     encoded as
     $\prod\limits_{i=1}^{k} P(i)^{U_i}$,
-    where $P$ is the prime function. The fundamental theorem of arithmetic
-    states that each integer corresponds to a unique prime factorisation. This
-    means that each of this prime histogram products corresponds to a unique
-    integer. We can then simply perform an integer comparison to test equality.
-    Another benefit of this approach is that we can `add' a letter to a
-    histogram simply by multiplying it by the corresponding prime number. Here
-    is the implementation:
+    where $P$ is the prime function (this is a kind of G\"odel coding). The
+    fundamental theorem of arithmetic states that each integer corresponds to a
+    unique prime factorisation. This means that each of this prime histogram
+    products corresponds to a unique integer. We can then simply perform an
+    integer comparison to test equality.  Another benefit of this approach is
+    that we can `add' a letter to a histogram simply by multiplying it by the
+    corresponding prime number. Here is the implementation:
 
 \begin{lstlisting}[language=Pascal, caption=Prime-number anagram checking in Pascal]
 program Primes;
