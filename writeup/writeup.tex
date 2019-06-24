@@ -1,49 +1,14 @@
-\documentclass{article}
+% Paper size, font size, equations align to the left
+\documentclass[fleqn,a4paper,11pt]{article}
 \title{Anagrams assignment}
 \author{Izaak van Dongen}
 
-\usepackage{savetrees}
+% Load all the configuration from a package, to keep content separate from
+% markup.
+\usepackage{mysty}
 
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{commath}
-
-\usepackage[parfill]{parskip}
-
-\usepackage[utf8]{inputenc}
-
-\usepackage{graphicx}
-
-\graphicspath{ {images/} }
-
-\usepackage{listings}
-\usepackage{color}
-
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-\lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\footnotesize,
-    breaklines=true,
-    captionpos=b,
-    keepspaces=true,
-    numbers=left,
-    numbersep=5pt,
-    showspaces=false,
-    showstringspaces=false,
-    showtabs=false,
-    tabsize=2
-}
-
-\lstset{style=mystyle}
-
+% The actual document content. Nowadays I would probably put this in a separate
+% .tex file and \input that.
 \begin{document}
     \maketitle
     \tableofcontents
@@ -51,15 +16,18 @@
     \section{Introduction and definitions}
 
     The notion of an anagram is actually quite simple to set-theoretically
-    represent. We say two strings $S$ and $T$, of lengths $k$ and $l$
+    represent. We say two strings \(S\) and \(T\), of lengths \(k\) and \(l\)
     respectively, are palindromes iff
-    $k = l\ \land\ \{x: x \in S\} = \{x: x \in T\}$.
+    \begin{equation}
+        k = l \land \{x: x \in S\} = \{x: x \in T\}
+    \end{equation}
     This capitalises on the fact that sets are unordered. As this seems a
-    little terse let's also define
-    $A = B \iff A \subseteq B\ \land\ B \subseteq A$
-    where
-    $C \subseteq D \iff \forall x \in C: x \in D$.
-
+    little terse let's also make the definition
+    \begin{equation}
+        A = B \iff A \subseteq B \land B \subseteq A \quad
+            \text{where} \quad
+            C \subseteq D \iff \forall x \in C: x \in D
+    \end{equation}
     Similarly to palindromes, some algorithms work better on just letters, and
     this is closer to the notion of what an anagram really is. To avoid having
     "cleanup" code everywhere, this is resolved by saying that the code need
@@ -145,9 +113,9 @@ end.
 \iffalse $ \fi % syntax highlighting
 
     This also implements a small optimisation - rather than just searching for
-    the minimum each pass, it finds a selects both the maximum and minimum.
-    This won't change the complexity of the algorithm, but probably improves
-    the constant factor a bit.
+    the minimum each pass, it finds a selects both the maximum and minimum. This
+    won't change the complexity of the algorithm, but probably improves the
+    constant factor a bit.
 
     This implementation seemed a little vanilla, so, inspired somewhat by the
     following Haskell:
@@ -240,20 +208,20 @@ begin
 end.
 \end{lstlisting}
 
-    However none of this was particularly to much avail, as selection sort has
-    a complexity of $O(n^2)$, owed to its linear number of passes it must make.
-    A better idea really would be to implement something like quicksort, which
-    would take $O(n \log(n))$. However, this would in fact also be slower than
-    another sorting-based approach, and I'm somewhat constrained for time, so
-    I've opted not to do that. As text consists of discrete elements, we can
-    apply an even faster class of sorting algorithm - the integer sort. These
-    don't rely on comparisons, but instead use integer arithmetic, which is
-    generally a lot faster. In this case, the most appropriate would be the
+    However none of this was particularly to much avail, as selection sort has a
+    complexity of \(\BigO(n^2)\), owed to its linear number of passes it must
+    make. A better idea really would be to implement something like quicksort,
+    which would take \(\BigO(n \log(n))\). However, this would in fact also be
+    slower than another sorting-based approach, and I'm somewhat constrained for
+    time, so I've opted not to do that. As text consists of discrete elements,
+    we can apply an even faster class of sorting algorithm - the integer sort.
+    These don't rely on comparisons, but instead use integer arithmetic, which
+    is generally a lot faster. In this case, the most appropriate would be the
     counting sort, which has a linear runtime in the length of the list.
     Counting sort would be appropriate as it is histogram-based, and we have a
     good restriction on possible characters (ie letters). However, I actually
-    won't implement counting sort either because having constructed a
-    histogram, we can just \textit{compare histograms}.
+    won't implement counting sort either because having constructed a histogram,
+    we can just \textit{compare histograms}.
 
     \section{Comparing letter frequencies}
 
@@ -316,16 +284,16 @@ end.
 \end{lstlisting}
 
     As the number of letters is constant, the complexity of this program only
-    depends on the length of the text, so has complexity $O(n)$.
+    depends on the length of the text, so has complexity \(\BigO(n)\).
 
     \section{The fundamental theorem of arithmetic}
 
     Interestingly, as a bit of fun, there is another way to represent a
     histogram. This is as an integer. We say that some histogram represents the
-    series of frequencies $U$, from indices $1$ to $k$.  This histogram can be
-    encoded as
-    $\prod\limits_{i=1}^{k} P(i)^{U_i}$,
-    where $P$ is the prime function (this is a kind of G\"odel coding). The
+    series of frequencies \(U\), from indices \(1\) to \(k\).  This histogram
+    can be encoded as
+    \(\prod\limits_{i=1}^{k} P(i)^{U_i}\),
+    where \(P\) is the prime function (this is a kind of G\"odel coding). The
     fundamental theorem of arithmetic states that each integer corresponds to a
     unique prime factorisation. This means that each of this prime histogram
     products corresponds to a unique integer. We can then simply perform an
@@ -366,34 +334,33 @@ begin
 end.
 \end{lstlisting}
 
-    It's also impressively short, especially considering that this is written
-    in Pascal. A small modification made with regard to the original statement
-    is that the correspondence of letters to primes isn't quite linear in the
+    It's also impressively short, especially considering that this is written in
+    Pascal. A small modification made with regard to the original statement is
+    that the correspondence of letters to primes isn't quite linear in the
     progression of primes. I have in fact mapped the most frequently occurring
     letters to the smallest primes. This doesn't have a theoretical effect on
     the algorithm, but it means that in theory the integers being used should
     remain a little smaller.
 
     This approach does have a slight drawback. For programming languages with
-    primarily finite integer types, it may cause integer overflow to occur
-    (this is in fact highly likely for longer words, as the value of the
-    integer is roughly exponential in length of text). This can lead to false
-    positives. Interestingly, it cannot lead to a false negative - this is
-    because really an overflowing integer system is a system of modular
-    arithmetic, and multiplication is commutative in modular arithmetic, so a
-    weaker version of the fundamental theorem still holds..
+    primarily finite integer types, it may cause integer overflow to occur (this
+    is in fact highly likely for longer words, as the value of the integer is
+    roughly exponential in length of text). This can lead to false positives.
+    Interestingly, it cannot lead to a false negative - this is because really
+    an overflowing integer system is a system of modular arithmetic, and
+    multiplication is commutative in modular arithmetic, so a weaker version of
+    the fundamental theorem still holds..
 
     \section{Crossing off letters}
 
     For completeness, I thought I should implement the suggested `crossing off'
-    approach. I decided to try and implement it in some semblance of
-    optimality, so didn't perform any deletions (I suspect these would be very
-    slow, as they require a section of memory to be `shifted'. Instead, I also
-    created a boolean array to signify the `crosses'. This is perhaps a nice
-    example of space vs time complexity, as the linear auxiliary space here
-    offers a good increase in time performance. Despite this, it will still
-    have approximately $O(n^2)$ complexity due to the linear number of linear
-    passes.
+    approach. I decided to try and implement it in some semblance of optimality,
+    so didn't perform any deletions (I suspect these would be very slow, as they
+    require a section of memory to be `shifted'. Instead, I also created a
+    boolean array to signify the `crosses'. This is perhaps a nice example of
+    space vs time complexity, as the linear auxiliary space here offers a good
+    increase in time performance. Despite this, it will still have approximately
+    \(\BigO(n^2)\) complexity due to the linear number of linear passes.
 
 \begin{lstlisting}[language=Pascal, caption=`Crossing off' approach]
 program Slow;
@@ -437,9 +404,9 @@ end.
     \section{Brute force}
 
     In my journey from the suggested approach to the linear, histogram based
-    approach, I've encountered quite a couple of complexities. I thought that
-    to make selection sort feel better, I might implement something even
-    slower. That is, brute-forcing permutations.
+    approach, I've encountered quite a couple of complexities. I thought that to
+    make selection sort feel better, I might implement something even slower.
+    That is, brute-forcing permutations.
 
 \begin{lstlisting}[language=Python, caption=Brute force]
 import itertools
@@ -455,7 +422,7 @@ if __name__ == "__main__":
     print(is_anagram(*sys.argv[1:]))
 \end{lstlisting}
 
-    We can now add $O(n!)$ to the collection. Unfortunately, exponential
+    We can now add \(\BigO(n!)\) to the collection. Unfortunately, exponential
     complexity remains elusive.
 
     \section{Testing}
@@ -569,10 +536,10 @@ if __name__ == "__main__":
     This hardcodes the prescribed test cases, and also provides function to
     compute random anagrams, and random non-anagrams. Anagrams are relatively
     easy - generate a random list and apply a Fisher-Yeates shuffle.
-    Non-anagrams can be generated by doing something similar to with
-    palindromes - generate an anagram and then apply a mutation to one letter,
-    which guarantees that the result will not be an anagram. The program tests
-    these categories separately.
+    Non-anagrams can be generated by doing something similar to with palindromes
+    - generate an anagram and then apply a mutation to one letter, which
+    guarantees that the result will not be an anagram. The program tests these
+    categories separately.
 
     Another fun feature is the use of the carriage return (line 83), to erase
     the previous line of output, meaning it provides a constantly changing
@@ -638,7 +605,7 @@ failed on input 'NKYCEOCHALDDNLKPECZREYNQCLZYUFNPZZQBLAAXJDENZOVCQVPXBZMKESUKZQX
     \section{Source}
 
     All involved files, including this \LaTeX{} document, can be found at
-    \verb|https://github.com/elterminad0r/anagrams|.
+    \url{https://github.com/elterminad0r/anagrams}.
 
 
 \end{document}
