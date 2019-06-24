@@ -1,5 +1,5 @@
 # https://en.wikipedia.org/wiki/Letter_frequency
-# grep "[^ ]" 
+# grep "[^ ]"
 
 """
 Generate a suitable table of primes based on letter frequency

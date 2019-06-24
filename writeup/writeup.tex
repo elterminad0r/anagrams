@@ -25,23 +25,23 @@
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
 \lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},   
+    backgroundcolor=\color{backcolour},
     commentstyle=\color{codegreen},
     keywordstyle=\color{magenta},
     numberstyle=\tiny\color{codegray},
     stringstyle=\color{codepurple},
     basicstyle=\footnotesize,
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
     showstringspaces=false,
-    showtabs=false,                  
+    showtabs=false,
     tabsize=2
 }
- 
+
 \lstset{style=mystyle}
 
 \begin{document}
@@ -573,7 +573,7 @@ if __name__ == "__main__":
     palindromes - generate an anagram and then apply a mutation to one letter,
     which guarantees that the result will not be an anagram. The program tests
     these categories separately.
-    
+
     Another fun feature is the use of the carriage return (line 83), to erase
     the previous line of output, meaning it provides a constantly changing
     status. Also of interest, at line 57, the script actually compiles the file
@@ -582,8 +582,8 @@ if __name__ == "__main__":
     Here we test the first couple of programs:
 
 \begin{lstlisting}[caption=Actual testing]
-$ python aux/test_anagrams.py Freqs.pas RecSort.pas Slow.pas Sort.pas 
-testing Sort.pas     , length 128-256, passes  7035, fails     0               
+$ python aux/test_anagrams.py Freqs.pas RecSort.pas Slow.pas Sort.pas
+testing Sort.pas     , length 128-256, passes  7035, fails     0
 pos:
 
 ********************************************************************************
@@ -626,7 +626,7 @@ Sort.pas      passed 100.00% in 0.1417 0.1428 0.1441 0.1441 0.1478 0.1686 0.2135
 
 \begin{lstlisting}[caption=Testing `Primes']
 $ python aux/test_anagrams.py Primes.pas
-testing Primes.pas   , length 128-256, passes  6048, fails     0               
+testing Primes.pas   , length 128-256, passes  6048, fails     0
 failed on input 'NKYCEOCHALDDNLKPECZREYNQCLZYUFNPZZQBLAAXJDENZOVCQVPXBZMKESUKZQXUVLHTDCIJVAEQFHHWVVCDPJWSIOKIKUVJIGSKPQMDMUDDWFMZYPATESQNTBUYHRZDHBWADIXBCEKSQQYZVOEIXPZLOCIOVLQHDEKEPRAHQCOAEEMYUECGGCPACBRSQXT', 'QEECHKPEIWKDANJLXRQCZNUBZCTMOUCREIETLMCZEZROPOGWIZLQZQUFHNJTPYHDOGAYPXBBNSETCULSVCSKJBAYQAFYLQXECVQKDTVXANQODDHJMSQPDAHOXEZEZCSEGVXBMYLHUPIEISZNVKQCVCKKOHVRIWYIAKDBYAUVLMDEKVWPACDDHQZFPZQDUEC' (b'TRUE\n')
 \end{lstlisting}
 \iffalse $ \fi % syntax highlighting
