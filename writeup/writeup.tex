@@ -41,76 +41,8 @@
     The suggested algorithm was to apply a selection sort to each string. I
     first implemented it like this:
 
-\begin{lstlisting}[language=Pascal, caption=Initial selection sort]
-{$MODE OBJFPC}
-
-program Sort;
-
-uses SysUtils;
-
-procedure swap_vars(var a, b: char);
-var
-    t: char;
-begin
-    t := b;
-    b := a;
-    a := t;
-end;
-
-procedure swap_vars(var a, b: integer);
-var
-    t: integer;
-begin
-    t := b;
-    b := a;
-    a := t;
-end;
-
-procedure find_minmax(plain: string; lower, upper: integer; out min, max: integer);
-var
-    i: integer;
-begin
-    min := lower;
-    max := upper;
-    if min > max then
-        swap_vars(min, max);
-    for i := lower to upper do
-        if plain[i] < plain[min] then
-            min := i
-        else if plain[i] > plain[max] then
-            max := i;
-end;
-
-procedure selection_sort(var plain: string);
-var
-    lower, upper, min, max: integer;
-begin
-    lower := 1;
-    upper := length(plain);
-    while upper > lower do begin
-        find_minmax(plain, lower, upper, min, max);
-        swap_vars(plain[max], plain[upper]);
-        if min = upper then
-            swap_vars(plain[max], plain[lower])
-        else
-            swap_vars(plain[min], plain[lower]);
-        lower := lower + 1;
-        upper := upper - 1;
-    end;
-end;
-
-function is_anagram(a, b: string): boolean;
-begin
-    selection_sort(a);
-    selection_sort(b);
-    is_anagram := a = b;
-end;
-
-begin
-    writeln(is_anagram(ParamStr(1), ParamStr(2)));
-end.
-\end{lstlisting}
-\iffalse $ \fi % syntax highlighting
+\lstinputlisting[language=Pascal, caption=Initial selection sort]
+{../src/Sort.pas}
 
     This also implements a small optimisation - rather than just searching for
     the minimum each pass, it finds a selects both the maximum and minimum. This
@@ -120,93 +52,14 @@ end.
     This implementation seemed a little vanilla, so, inspired somewhat by the
     following Haskell:
 
-\begin{lstlisting}[language=Haskell, caption=Selection sort in Haskell]
-import System.Environment
-
-set_item :: [a] -> Int -> a -> [a]
-set_item (x:xs) 0 y = y:xs
-set_item (x:xs) n y = x:set_item xs (n - 1) y
-
-min_of_two :: (Ord a) => a -> a -> a
-min_of_two x y | x < y = x | otherwise = y
-
-min_item :: (Ord a) => [a] -> (a, Int)
-min_item [a] = (a, 0)
-min_item (x:xs) = let (alt, ind) = min_item xs in
-                        min_of_two (x, 0) (alt, ind + 1)
-
-sel_sort :: (Ord a) => [a] -> [a]
-sel_sort [] = []
-sel_sort [a] = [a]
-sel_sort xs = let (min_it, pos) = min_item xs in
-                        min_it:(sel_sort . tail . (set_item xs pos) . head) xs
-
-is_anagram :: (Ord a) => [a] -> [a] -> Bool
-is_anagram x y = (sel_sort x) ==  (sel_sort y)
-
-main = do
-    [a, b] <- getArgs
-    print $ is_anagram a b
-\end{lstlisting}
-\iffalse $ \fi % syntax highlighting
+\lstinputlisting[language=Haskell, caption=Selection sort in Haskell]
+{../src/aux/sort.hs}
 
     I wrote a recursive implementation of the more conventional variation of
     selection sort in Pascal:
 
-\begin{lstlisting}[language=Pascal, caption=Recursive selection sort in Pascal]
-program RecSort;
-
-function min(plain: string; a, b: integer): integer;
-begin
-    if plain[a] < plain[b] then
-        min := a
-    else
-        min := b;
-end;
-
-function min_of_string(plain: string; i: integer): integer;
-begin
-    if i = length(plain) then
-        min_of_string := i
-    else
-        min_of_string := min(plain, i, min_of_string(plain, i + 1));
-end;
-
-function swap_chars(plain: string; a, b: integer): string;
-var
-    t: char;
-begin
-    t := plain[a];
-    plain[a] := plain[b];
-    plain[b] := t;
-    swap_chars := plain;
-end;
-
-function _selection_sort(plain: string; i: integer): string;
-begin
-    if length(plain) = i then
-        _selection_sort := plain
-    else
-        _selection_sort := _selection_sort(
-                             swap_chars(plain, i,
-                                        min_of_string(plain, i)),
-                             i + 1);
-end;
-
-function selection_sort(plain: string): string;
-begin
-    selection_sort := _selection_sort(plain, 1);
-end;
-
-function is_anagram(a, b: string): boolean;
-begin
-    is_anagram := selection_sort(a) = selection_sort(b);
-end;
-
-begin
-    writeln(is_anagram(ParamStr(1), ParamStr(2)));
-end.
-\end{lstlisting}
+\lstinputlisting[language=Pascal, caption=Recursive selection sort in Pascal]
+{../src/RecSort.pas}
 
     However none of this was particularly to much avail, as selection sort has a
     complexity of \(\BigO(n^2)\), owed to its linear number of passes it must
@@ -229,59 +82,8 @@ end.
     multiset, or histogram, of letters can be easily represented as an array of
     integers indexed by letters.
 
-\begin{lstlisting}[language=Pascal, caption=Basic letter frequencies in Pascal]
-program Freqs;
-
-uses
-    SysUtils;
-
-const
-    alphabet: set of char = ['a'..'z','A'..'Z'];
-
-type
-    LetterFrequency = array['a'..'z'] of integer;
-
-function new_freq: LetterFrequency;
-var
-    freqs: LetterFrequency;
-    i: char;
-begin
-    for i := 'a' to 'z' do
-        freqs[i] := 0;
-    new_freq := freqs;
-end;
-
-function compare_freqs(a, b: LetterFrequency): boolean;
-var
-    i: char;
-begin
-    for i := 'a' to 'z' do
-        if a[i] <> b[i] then
-            exit(False);
-    exit(True);
-end;
-
-function get_freq(plain: string): LetterFrequency;
-var
-    freqs: LetterFrequency;
-    i: integer;
-begin
-    freqs := new_freq;
-    for i := 1 to length(plain) do
-        if plain[i] in alphabet then
-            inc(freqs[LowerCase(plain[i])]);
-    get_freq := freqs;
-end;
-
-function is_anagram(a, b: string): boolean;
-begin
-    is_anagram := compare_freqs(get_freq(a), get_freq(b));
-end;
-
-begin
-    writeln(is_anagram(ParamStr(1), ParamStr(2)));
-end.
-\end{lstlisting}
+\lstinputlisting[language=Pascal, caption=Basic letter frequencies in Pascal]
+{../src/Freqs.pas}
 
     As the number of letters is constant, the complexity of this program only
     depends on the length of the text, so has complexity \(\BigO(n)\).
@@ -301,38 +103,8 @@ end.
     that we can `add' a letter to a histogram simply by multiplying it by the
     corresponding prime number. Here is the implementation:
 
-\begin{lstlisting}[language=Pascal, caption=Prime-number anagram checking in Pascal]
-program Primes;
-
-uses
-    SysUtils;
-
-const
-    prime_table: array['a'..'z'] of integer =
-                           (5, 71, 37, 29, 2, 53, 59, 19, 11, 83, 79, 31, 43,
-                            13, 7, 67, 97, 23, 17, 3, 41, 73, 47, 89, 61, 101);
-    alpha: set of char = ['a'..'z','A'..'Z'];
-
-function prime_hash(plain: string): integer;
-var
-    prod: integer = 1;
-    c: char;
-begin
-    for c in plain do
-        if c in alpha then
-            prod := prod * prime_table[LowerCase(c)];
-    prime_hash := prod;
-end;
-
-function is_anagram(a, b: string): boolean;
-begin
-    is_anagram := prime_hash(a) = prime_hash(b);
-end;
-
-begin
-    writeln(is_anagram(ParamStr(1), ParamStr(2)));
-end.
-\end{lstlisting}
+\lstinputlisting[language=Pascal, caption=Prime-number anagram checking in Pascal]
+{../src/Primes.pas}
 
     It's also impressively short, especially considering that this is written in
     Pascal. A small modification made with regard to the original statement is
@@ -362,44 +134,8 @@ end.
     increase in time performance. Despite this, it will still have approximately
     \(\BigO(n^2)\) complexity due to the linear number of linear passes.
 
-\begin{lstlisting}[language=Pascal, caption=`Crossing off' approach]
-program Slow;
-
-uses
-    SysUtils;
-
-function is_anagram(a, b: string): boolean;
-var
-    available: array of boolean;
-    i: integer;
-    c: char;
-    found_match: boolean;
-begin
-    if length(a) <> length(b) then
-        exit(False)
-    else
-        setLength(available, length(b));
-        for i := 0 to length(b) - 1 do
-            available[i] := True;
-        for c in a do begin
-            found_match := False;
-            for i := 0 to length(b) - 1 do
-                if  (not found_match)
-                     and available[i]
-                     and (b[i + 1] = c) then begin
-                    available[i] := False;
-                    found_match := True;
-                end;
-            if not found_match then
-                exit(False);
-        end;
-    exit(True);
-end;
-
-begin
-    writeln(is_anagram(ParamStr(1), ParamStr(2)));
-end.
-\end{lstlisting}
+\lstinputlisting[language=Pascal, caption=`Crossing off' approach]
+{../src/Slow.pas}
 
     \section{Brute force}
 
@@ -408,19 +144,8 @@ end.
     make selection sort feel better, I might implement something even slower.
     That is, brute-forcing permutations.
 
-\begin{lstlisting}[language=Python, caption=Brute force]
-import itertools
-import sys
-
-def letters(text):
-    return "".join(filter(str.isalpha, text))
-
-def is_anagram(a, b):
-    return tuple(letters(a)) in itertools.permutations(b)
-
-if __name__ == "__main__":
-    print(is_anagram(*sys.argv[1:]))
-\end{lstlisting}
+\lstinputlisting[language=Python, caption=Brute force]
+{../src/aux/perms.py}
 
     We can now add \(\BigO(n!)\) to the collection. Unfortunately, exponential
     complexity remains elusive.
@@ -429,109 +154,8 @@ if __name__ == "__main__":
 
     I, again, wrote a Python script to systematically test my programs.
 
-\begin{lstlisting}[language=Python, caption=Testing script]
-"""
-Integration test a program that should determine if things are anagrams
-"""
-
-import argparse
-import string
-import subprocess
-import time
-import re
-import sys
-
-from random import randrange, choice, shuffle, sample
-
-AN_TRUE = [("OLYMPIAD", "OLYMPIAD"),
-           ("LEMON", "MELON"),
-           ("COVERSLIP", "SLIPCOVER"),
-           ("TEARDROP", "PREDATOR"),
-           ("ABBCCCDDD", "DDDCCCBBA"),
-           ]
-
-AN_FALSE = [("I", "A"),
-            ("FORTY", "FORT"),
-            ("ONE", "SIX"),
-            ("GREEN", "RANGE"),
-            ("ABBCCCDDD", "AAABBBCCD"),
-            ]
-
-def strip_suffix(script):
-    return re.match(r"(.*)\.pas", script).group(1)
-
-def get_args():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("files", nargs="*", type=str,
-                                    help="Pascal files to test")
-    return parser.parse_args()
-
-def get_anagrams(length, num):
-    yield from AN_TRUE
-    for _ in range(num):
-        word = [choice(string.ascii_uppercase) for _ in range(length())]
-        copy = word[:]
-        shuffle(copy)
-        yield map("".join, [word, copy])
-
-def get_nonanagrams(length, num):
-    yield from AN_FALSE
-    for _ in range(num):
-        word = [randrange(len(string.ascii_uppercase)) for _ in range(length())]
-        copy = word[:]
-        shuffle(copy)
-        copy[randrange(len(copy))] += randrange(1, len(string.ascii_uppercase))
-        yield ("".join(string.ascii_uppercase[i % len(string.ascii_uppercase)]
-                                        for i in j) for j in (word, copy))
-
-def test_correct(script, generator, expected):
-    exec_path = "bin/{}".format(strip_suffix(script))
-    comp = subprocess.Popen(
-                ["fpc", script, "-o{}".format(exec_path), "-Tlinux"],
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
-    out, err = comp.communicate()
-    if comp.returncode:
-        sys.exit("\ncritical {}".format(err))
-    passes, fails = 0, 0
-    timings = [0] * 7
-    for length in range(1, 8):
-        for a, b in generator(
-                    lambda: randrange(1 << length, 2 << length), 1000):
-            proc = subprocess.Popen([exec_path, a, b],
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
-            start = time.time()
-            out, err = proc.communicate()
-            timings[length - 1] += time.time() - start
-            if err:
-                sys.exit("critical\n{}".format(err))
-            if out.decode().strip().lower() == expected:
-                passes += 1
-            else:
-                fails += 1
-                sys.exit("\nfailed on input {!r}, {!r} ({})".format(a, b, out))
-            print(
-        "\rtesting {:13}, length {:3}-{:3}, passes {:5}, fails {:5}".format(
-                script, 1 << length, 2 << length, passes, fails).ljust(80, " "),
-                  end="")
-    return "\n{0}\n{3:13} passed {1:.2%} in {2}\n{0}".format(
-                        "*" * 80, passes / (passes + fails), " ".join("{:6.4f}".format(t) for t in timings),
-                        script)
-
-def main():
-    args = get_args()
-    pos_results = []
-    neg_results = []
-    for script in args.files:
-        pos_results.append(test_correct(script, get_anagrams, "true"))
-        neg_results.append(test_correct(script, get_nonanagrams, "false"))
-    print("\npos:\n{}\nneg:\n{}".format("\n".join(pos_results),
-                                      "\n".join(neg_results)))
-
-if __name__ == "__main__":
-    main()
-\end{lstlisting}
+\lstinputlisting[language=Python, caption=Testing script]
+{../src/aux/test_anagrams.py}
 
     This hardcodes the prescribed test cases, and also provides function to
     compute random anagrams, and random non-anagrams. Anagrams are relatively
